@@ -1,0 +1,9 @@
+@'
+# Folder ini hanya untuk file unggahan. Jangan pernah mengeksekusi skrip di sini.
+Options -ExecCGI -Indexes
+php_flag engine off
+
+<FilesMatch "\.(php|phtml|phar|php[0-9]|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+'@ | Set-Content uploads\.htaccess -Encoding ascii
