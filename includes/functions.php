@@ -112,7 +112,7 @@ function csrf_verify(): void
     start_session_once();
     $sent = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!is_string($sent) || empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $sent)) {
-        fail(419, 'Token CSRF tidak valid. Muat ulang halaman lalu coba lagi.');
+        fail(403, 'Token CSRF tidak valid. Muat ulang halaman lalu coba lagi.');
     }
 }
 
