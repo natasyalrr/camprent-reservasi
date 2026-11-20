@@ -1,0 +1,8 @@
+*.log
+.DS_Store
+.env
+.idea/
+.vscode/
+Thumbs.db
+config/database.local.php
+node_modules/
