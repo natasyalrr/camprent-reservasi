@@ -5,3 +5,6 @@ assets/images/uploads/*
 test_helper.php
 uploads/images/*
 !uploads/images/.gitkeep
+
+test_staff_login.php
+	est_staff_login.php
