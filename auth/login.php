@@ -1,12 +1,15 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-$errors = [];
-$info = null;
-$tab = 'masuk';
+$flash = $_SESSION['register_flash'] ?? [];
+unset($_SESSION['register_flash']);
+
+$errors = $flash['errors'] ?? [];
+$info = $flash['info'] ?? null;
+$tab = $flash['tab'] ?? 'masuk';
 $next = safe_next($_GET['next'] ?? null);
 
-if (current_user() && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+if (current_user()) {
     redirect(role_home(current_user()['role']));
 }
 
@@ -27,14 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             login_register_failure();
             $errors[] = 'Email atau kata sandi salah.';
         }
-    } elseif (($_POST['action'] ?? '') === 'register') {
-        $tab = 'daftar';
-        $errors = validate_register($_POST);
-        if (!$errors) {
-            [$ok, $msg] = register_user(trim($_POST['fullname']), trim($_POST['email']), trim($_POST['phone']), $_POST['password']);
-            if ($ok) { $tab = 'masuk'; $info = 'Pendaftaran berhasil. Silakan masuk.'; }
-            else { $errors[] = $msg; }
-        }
+
     }
 }
 
@@ -70,7 +66,7 @@ require __DIR__ . '/../includes/layout_user_top.php';
 </div>
 <!-- TAB CONTENT 1: MASUK -->
 <section class="flex flex-col gap-5 w-full" id="panel-masuk">
-<?php if ($errors): ?><div role="alert" class="rounded-xl bg-error-container text-on-error-container p-3 font-label-lg text-label-lg"><?php foreach ($errors as $m): ?><div><?= e($m) ?></div><?php endforeach; ?></div><?php endif; ?>
+<?php if ($errors && $tab !== 'daftar'): ?><div role="alert" class="rounded-xl bg-error-container text-on-error-container p-3 font-label-lg text-label-lg"><?php foreach ($errors as $m): ?><div><?= e($m) ?></div><?php endforeach; ?></div><?php endif; ?>
 <?php if ($info): ?><div role="status" class="rounded-xl bg-secondary-container text-on-secondary-container p-3 font-label-lg text-label-lg"><?= e($info) ?></div><?php endif; ?>
 
 <!-- Main Form Card -->
@@ -183,13 +179,14 @@ require __DIR__ . '/../includes/layout_user_top.php';
 </section>
 <!-- TAB CONTENT 2: DAFTAR -->
 <section class="hidden flex-col gap-5 w-full" id="panel-daftar">
+<?php if ($errors && $tab === 'daftar'): ?><div role="alert" class="rounded-xl bg-error-container text-on-error-container p-3 font-label-lg text-label-lg"><?php foreach ($errors as $m): ?><div><?= e($m) ?></div><?php endforeach; ?></div><?php endif; ?>
 <!-- Registration Card -->
 <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm flex flex-col gap-4">
 <div class="flex items-center justify-between pb-1">
 <h3 class="font-headline-sm text-headline-sm text-on-surface">Registrasi Member</h3>
 <span class="text-label-sm font-label-sm px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container">Verifikasi Cepat</span>
 </div>
-<form class="flex flex-col gap-3.5" id="form-register" method="post" action="" novalidate>
+<form class="flex flex-col gap-3.5" id="form-register" method="post" action="<?= e(url('actions/auth/register.php')) ?>" novalidate>
 <?= csrf_field() ?><input type="hidden" name="action" value="register"/>
 <!-- Field 1: Nama Lengkap -->
 <div class="flex flex-col gap-1">
