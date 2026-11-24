@@ -6,3 +6,7 @@
 Thumbs.db
 config/database.local.php
 node_modules/
+
+uploads/images/*
+!uploads/images/.gitkeep
+test_*.php
